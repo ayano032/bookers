@@ -1,0 +1,84 @@
+<div class="container">
+  <div class="row">
+      <div class="col-xs-3">
+<h1>User info</h1>
+<div class="profile-container">
+<%= link_to user_path(@user.id) do %><%= attachment_image_tag @user, :profile_image, :fill, 60, 60, fallback: "no_image.jpg" %>
+<% end %>
+</div>
+<table class="table table-striped">
+  <td><h3 class="profile-name"><%= @user.name %></h3></td>
+<tr>
+  <td><h3 class="introduction"><%= @user.introduction %></h3></td>
+</tr>
+</table>
+ <%= link_to "", edit_user_path(@user), class: "col-xs-12 btn btn-default glyphicon glyphicon-wrench" %>
+
+</div>
+<div class="col-xs-9">
+<table class="table table-striped">
+<h1>Books</h1>
+<% @books.each do |book| %>
+<tr>
+  <td>
+        <%= link_to user_path(book.user_id) do %><%= attachment_image_tag book.user, :profile_image, :fill, 60, 60, fallback: "no_image.jpg" %><%= book.user.name %>
+      <% end %>
+</td>
+<td>Title:</td>
+<td><%= link_to book.title, book_path(book) %></td>
+<td>Body:</td>
+<td><%=book.body %>
+</td>
+</tr>
+  <td>By
+    <%= book.user.name %>
+  </td>
+  <td>
+    <%= link_to "#{book.book_comments.count} コメント", book_path(book.id) %>
+  </td>
+    <% if book.favorited_by?(current_user) %>
+<td>
+  <%= link_to book_favorites_path(book), method: :delete do %>
+    <i class="fa fa-heart" aria-hidden="true" style="color: red;"></i>
+    <%= book.favorites.count %> いいね
+  <% end %>
+</td>
+<% else %>
+<td>
+  <%= link_to book_favorites_path(book), method: :book do %>
+    <i class="fa fa-heart-o" aria-hidden="true"></i>
+    <%= book.favorites.count %> いいね
+  <% end %>
+</td>
+<% end %>
+<% end %>
+</table>
+</div>
+ </div>
+
+
+
+
+
+<h1>New book</h1>
+<%= form_for(@book, url: books_path) do |f| %>
+  <% if @book.errors.any? %>
+    <div id="error_explanation">
+     <h2><%= pluralize(@book.errors.count, "error") %> prohibited this product from being saved:</h2>
+
+        <ul>
+        <% @book.errors.full_messages.each do |message|%>
+        <li><%= message %></li>
+        <% end %>
+      </ul>
+      </div>
+  <% end %>
+  <h4>Title</h4>
+  <%= f.text_field :title %>
+  <h4>Body</h4>
+  <%= f.text_area :body %>
+  <%= f.submit 'Create Book' %>
+  <%= paginate @books %>
+<% end %>
+</div>
+
